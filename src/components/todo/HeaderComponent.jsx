@@ -9,6 +9,7 @@ export default function HeaderComponent(){
     }
 
     const authContext = useAuth()
+    const username = authContext.username
     const isAuthenticated = authContext.isAuthenticated
 
     return(
@@ -20,7 +21,7 @@ export default function HeaderComponent(){
                     <div className="collapse navbar-collapse">
                         <ul className="navbar-nav">
                             <li className="nav-item fs-5">
-                                {isAuthenticated && <Link className="nav-link" to="/welcome/in28minutes">Home</Link>}
+                                {isAuthenticated && <Link className="nav-link" to={`/welcome/${username}`}>Home</Link>}
                             </li>
                             <li className="nav-item fs-5">
                                 {isAuthenticated && <Link className="nav-link" to="/todos">Todos</Link>}
