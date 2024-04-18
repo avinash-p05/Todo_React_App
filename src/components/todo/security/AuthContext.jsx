@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { executeBasicAuthenticationService } from "../api/HelloWorldApiService";
+import { executeJWTAuthenticationService } from "../api/AuthenticationApiService";
 import { apiClient } from "../api/ApiClient";
 
 export const AuthContext = createContext()
@@ -26,39 +26,74 @@ export default function AuthProvider( { children } ){
     //     }
     // }
 
+    // async function login(username,password){
+
+    //     const baToken = 'Basic '+ window.btoa(username+":"+password)
+
+    //     try {
+            
+    //             const responseT = await executeBasicAuthenticationService(baToken)
+
+    //             if(responseT.status===200){
+    //                 setAuthenticated(true)
+    //                 setUsername(username)
+    //                 setToken(baToken)
+
+    //                 apiClient.interceptors.request.use(
+    //                     (config) => {
+    //                         console.log("intercepting and adding a token")
+    //                         config.headers.Authorization = baToken
+    //                         return config
+    //                     }
+    //                 )
+
+    //                 return true
+
+    //             }
+    //             else{
+    //                 logout()
+    //                 return false
+    //     }
+    //     } catch (error) {
+    //         logout()
+    //         return false
+    //     }
+
+    // }
+
+
     async function login(username,password){
 
-        const baToken = 'Basic '+ window.btoa(username+":"+password)
-
-        try {
+                    try {
+                        
+                            const responseT = await executeJWTAuthenticationService(username,password)
+                            console.log(responseT)
+                            if(responseT.status===200){
+                                const jwtToken = responseT.data.token
+                                setAuthenticated(true)
+                                setUsername(username)
+                                setToken('Bearer '+ jwtToken)
             
-                const responseT = await executeBasicAuthenticationService(baToken)
-
-                if(responseT.status===200){
-                    setAuthenticated(true)
-                    setUsername(username)
-                    setToken(baToken)
-
-                    apiClient.interceptors.request.use(
-                        (config) => {
-                            console.log("intercepting and adding a token")
-                            config.headers.Authorization = baToken
-                            return config
-                        }
-                    )
-
-                    return true
-
-                }
-                else{
-                    logout()
-                    return false
-        }
-        } catch (error) {
-            logout()
-            return false
-        }
-
+                                apiClient.interceptors.request.use(
+                                    (config) => {
+                                        console.log("intercepting and adding a token")
+                                        config.headers.Authorization = jwtToken
+                                        return config
+                                    }
+                                )
+            
+                                return true
+            
+                            }
+                            else{
+                                logout()
+                                return false
+                            }
+                    } catch (error) {
+                        logout()
+                        return false
+                    }
+        
     }
 
 
